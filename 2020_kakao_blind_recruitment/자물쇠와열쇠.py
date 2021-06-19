@@ -33,5 +33,4 @@ def solution(key, lock):
                 for ii in range(m):
                     for jj in range(m):
                         large_lock[i+ii][j+jj] -= key[ii][jj]
-            
     return False
