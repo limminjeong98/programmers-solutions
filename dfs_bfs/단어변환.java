@@ -12,12 +12,12 @@ class Solution {
         if (!Arrays.asList(words).contains(target)) {
             return 0;
         }
-        bfs(n, l, 0, begin, target, words, visited);
+        dfs(n, l, 0, begin, target, words, visited);
         answer = (answer == 51 ? 0 : answer);
         return answer;
     }
 
-    public void bfs(int n, int l, int cnt, String begin, String target, String[] words, boolean[] visited) {
+    public void dfs(int n, int l, int cnt, String begin, String target, String[] words, boolean[] visited) {
         if (begin.equals(target)) {
             answer = (answer > cnt ? cnt : answer);
             return;
@@ -34,7 +34,7 @@ class Solution {
             }
             if (tmp == 1) {
                 visited[i] = true;
-                bfs(n, l, cnt, words[i], target, words, visited);
+                dfs(n, l, cnt, words[i], target, words, visited);
                 visited[i] = false;
             }
         }
