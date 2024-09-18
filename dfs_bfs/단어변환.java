@@ -1,42 +1,50 @@
-import java.util.*;
+import java.util.Arrays;
 
 class Solution {
-    public static boolean[] visited;
+    
     public static int answer;
-
+    public static int words_size;
+    public static int words_length;
+    
     public int solution(String begin, String target, String[] words) {
-        int n = words.length;
-        int l = words[0].length();
-        visited = new boolean[n];
+        // 변환할 수 없는 경우
+        if (!Arrays.asList(words).contains(target)) return 0;
+        
+        // 50개 이하의 단어가 있음
         answer = 51;
-        if (!Arrays.asList(words).contains(target)) {
-            return 0;
-        }
-        dfs(n, l, 0, begin, target, words, visited);
-        answer = (answer == 51 ? 0 : answer);
-        return answer;
+        
+        words_size = words.length;
+        words_length = words[0].length();
+        
+        boolean[] visited = new boolean[words_size];
+        
+        dfs(begin, target, words, visited, 0);
+        return answer == 51 ? 0 : answer;
     }
-
-    public void dfs(int n, int l, int cnt, String begin, String target, String[] words, boolean[] visited) {
+    
+    public void dfs(String begin, String target, String[] words, boolean[] visited, int count) {
         if (begin.equals(target)) {
-            answer = (answer > cnt ? cnt : answer);
+            answer = Math.min(answer, count);
             return;
         }
-        cnt++;
-        for (int i = 0; i < n; i++) {
-            if (visited[i])
-                continue;
-            int tmp = 0;
-            for (int j = 0; j < l; j++) {
+        
+        for (int i = 0; i < words_size; i++) {
+            if (visited[i]) continue;
+            
+            int diff = 0;
+            for (int j = 0; j < words_length; j++) {
                 if (begin.charAt(j) != words[i].charAt(j)) {
-                    tmp++;
+                    diff++;
                 }
+                if (diff > 1) break;
             }
-            if (tmp == 1) {
+            
+            if (diff == 1) {
                 visited[i] = true;
-                dfs(n, l, cnt, words[i], target, words, visited);
-                visited[i] = false;
+                dfs(words[i], target, words, visited, count + 1);
+                visited[i] = false;  
             }
+            
         }
-    }
+    }    
 }
