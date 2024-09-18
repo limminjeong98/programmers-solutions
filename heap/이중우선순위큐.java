@@ -1,38 +1,31 @@
-import java.util.*;
+import java.util.Queue;
+import java.util.PriorityQueue;
 
 class Solution {
     public int[] solution(String[] operations) {
-        int[] answer = {};
-        // Java PriorityQueue는 min heap을 구현
-        Queue<Integer> minh = new PriorityQueue<>();
-        Queue<Integer> maxh = new PriorityQueue<>();
-        for (String str : operations) {
-            String[] arr = str.split(" ");
-            int tmp = 0;
-            // String은 equals를 사용해 동등 비교
-            if (arr[0].equals("I")) {
-                minh.offer(Integer.valueOf(arr[1]));
-                maxh.offer(-Integer.valueOf(arr[1]));
+        Queue<Integer> minHeap = new PriorityQueue<>((a, b) -> a - b);
+        Queue<Integer> maxHeap = new PriorityQueue<>((a, b) -> b - a);
+        
+        
+        for (String operation : operations) {
+            String[] ops = operation.split(" ");
+            if (ops[0].equals("I")) {
+                minHeap.offer(Integer.parseInt(ops[1]));
+                maxHeap.offer(Integer.parseInt(ops[1]));
             } else {
-                if (minh.size() <= 0)
-                    continue;
-                if (Integer.valueOf(arr[1]) < 0) {
-                    // 큐에서 최솟값을 삭제
-                    // minh에서 삭제하고 같은 값을 maxh에서도 지워줌
-                    tmp = minh.poll();
-                    maxh.remove(-tmp);
+                // 비어있는 큐에서 데이터를 삭제하라는 연산은 무시
+                if (minHeap.isEmpty()) continue;
+                if (ops[1].equals("1")) {
+                    // 최대힙에서 삭제하고, 최소힙에서도 제거
+                    minHeap.remove(maxHeap.poll());
                 } else {
-                    tmp = maxh.poll();
-                    minh.remove(-tmp);
+                    // 최소힙에서 삭제하고, 최대힙에서도 제거
+                    maxHeap.remove(minHeap.poll());
                 }
             }
         }
-        if (minh.size() == 0)
-            return new int[] { 0, 0 };
-        if (minh.size() == 1) {
-            int tmp = minh.poll();
-            return new int[] { tmp, tmp };
-        }
-        return new int[] { -maxh.poll(), minh.poll() };
+        
+        if (minHeap.isEmpty()) return new int[] { 0, 0 };
+        return new int[] { maxHeap.poll(), minHeap.poll() };
     }
 }
