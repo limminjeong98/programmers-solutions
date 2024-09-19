@@ -1,43 +1,45 @@
-import java.util.*;
+import java.util.Queue;
+import java.util.LinkedList;
+import java.util.List;
+// import java.util.Arrays;
 
 class Solution {
     public int[] solution(int[] progresses, int[] speeds) {
-        List<Integer> answer = new ArrayList<>();
+        List<Integer> answer = new LinkedList<>();
         int n = progresses.length;
-
-        Queue q = new LinkedList();
-        Queue s = new LinkedList();
-
+        
+        // List<Integer> p = Arrays.stream(progresses).boxed().collect(Collectors.toList());
+        Queue<Integer> p = new LinkedList<>();
+        Queue<Integer> s = new LinkedList<>();
+        
         for (int i = 0; i < n; i++) {
-            q.add(progresses[i]);
-            s.add(speeds[i]);
+            p.offer(progresses[i]);
+            s.offer(speeds[i]);
         }
-
-        while (!q.isEmpty()) {
-            int cnt = 1;
-            int tmp = 1;
+        
+        while (!p.isEmpty()) {
+            // 이번 작업이 배포되기까지 기간
+            int day = 1;
+            // 이번 작업에서 배포되는 기능의 개수
+            int count = 1;
             while (true) {
-                if ((int) s.peek() * cnt + (int) q.peek() >= 100) {
-                    q.poll();
+                if ((p.peek() + s.peek() * day) >= 100) {
+                    p.poll();
                     s.poll();
                     break;
                 }
-                cnt++;
+                day++;
             }
-            if (!q.isEmpty()) {
-                while (!q.isEmpty() && (int) s.peek() * cnt + (int) q.peek() >= 100) {
-                    q.poll();
-                    s.poll();
-                    tmp++;
-                }
+            
+            while (!p.isEmpty() && (p.peek() + s.peek() * day) >= 100) {
+                p.poll();
+                s.poll();
+                count++;
             }
-            answer.add(tmp);
+            
+            answer.add(count);
         }
-        int length = answer.size();
-        int[] ans = new int[length];
-        for (int i = 0; i < length; i++) {
-            ans[i] = answer.get(i);
-        }
-        return ans;
+        
+        return answer.stream().mapToInt(i -> i).toArray();
     }
 }
